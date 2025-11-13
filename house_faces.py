@@ -21,7 +21,7 @@ class FacingAnalyzer:
         
         try:
             # 1. Property Points: We need the lat/lon and address info
-            gnaf_file = f"{self.data_path}gnaf.parquet"
+            gnaf_file = f"{self.data_path}gnaf_prop.parquet"
             self.gnaf = pd.read_parquet(gnaf_file)
             print(f"Loaded property points from: {os.path.basename(gnaf_file)}")
 
@@ -35,7 +35,7 @@ class FacingAnalyzer:
             # Better error message for the end user if files are missing
             raise FileNotFoundError(
                 f"Couldn't find a critical data file: {e.filename}. "
-                "Make sure 'gnaf.parquet' and 'roads.gpkg' are in the 'data/' folder."
+                "Make sure 'gnaf_prop.parquet' and 'roads.gpkg' are in the 'data/' folder."
             )
         except Exception as e:
             print(f"Error loading data: {e}")
@@ -49,7 +49,7 @@ class FacingAnalyzer:
         # We need to manually set the CRS since the original file is just a Pandas DataFrame.
         self.gnaf_points = gpd.GeoDataFrame(
             self.gnaf.copy(),
-            geometry=gpd.points_from_xy(self.gnaf.Longitude, self.gnaf.Latitude),
+            geometry=gpd.points_from_xy(self.gnaf.longitude, self.gnaf.latitude),
             crs="EPSG:4326"
         )
 
@@ -162,8 +162,8 @@ class FacingAnalyzer:
             # Build the report row
             results.append({
                 # Safely pull data from the original GNAF columns
-                'Address': row.get('Address', 'N/A'),
-                'PID': row.get('PID', 'N/A'),
+                'Address': row.get('address', 'N/A'),
+                'PID': row.get('gnaf_pid', 'N/A'),
                 'Orientation': orientation
             })
 
@@ -200,6 +200,6 @@ if __name__ == '__main__':
         print(csv_report[:200] + "...")
     except FileNotFoundError as e:
         print(f"\n[ERROR] Can't find the data: {e}")
-        print("ACTION: You must provide 'gnaf.parquet' and 'roads.gpkg' in the './data/' folder to run this.")
+        print("ACTION: You must provide 'gnaf_prop.parquet' and 'roads.gpkg' in the './data/' folder to run this.")
     except Exception as e:
         print(f"\n[FATAL ERROR] Something went wrong: {e}")

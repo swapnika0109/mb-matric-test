@@ -1,7 +1,7 @@
 import json
 from flask import Flask, render_template, Response
 # Make sure to import the updated class name
-from data_processor import FacingAnalyzer
+from house_faces import FacingAnalyzer
 
 # --- Configuration ---
 app = Flask(__name__)
@@ -26,7 +26,7 @@ def report_generation():
     except FileNotFoundError as e:
         # Simple error handling for missing files
         return f"<h1>Data Error: Missing Input File</h1><p>Whoops! I couldn't find a required file: {e.filename}. "
-        f"Please make sure 'gnaf.parquet' and 'roads.gpkg' are correctly placed in the '{DATA_DIR}' folder.</p>", 500
+        f"Please make sure 'gnaf_prop.parquet' and 'roads.gpkg' are correctly placed in the '{DATA_DIR}' folder.</p>", 500
     
     except Exception as e:
         # General error handling
